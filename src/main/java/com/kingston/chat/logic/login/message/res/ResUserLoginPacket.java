@@ -31,7 +31,7 @@ public class ResUserLoginPacket extends AbstractPacket{
 	@Override
 	public void execPacket() {
 		System.err.println("receive login "+ alertMsg);
-		LoginManager.getInstance().handleLoginResponse(this);
+//		LoginManager.getInstance().handleLoginResponse(this);
 	}
 
 	public String getAlertMsg() {

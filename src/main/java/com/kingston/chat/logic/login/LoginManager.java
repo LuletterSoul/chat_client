@@ -1,76 +1,92 @@
 package com.kingston.chat.logic.login;
 
-import com.kingston.chat.base.Constants;
 import com.kingston.chat.base.IoBaseService;
 import com.kingston.chat.base.UiBaseService;
 import com.kingston.chat.logic.login.message.req.ReqHeartBeatPacket;
-import com.kingston.chat.logic.login.message.req.ReqUserLoginPacket;
-import com.kingston.chat.logic.login.message.res.ResUserLoginPacket;
 import com.kingston.chat.ui.R;
 import com.kingston.chat.ui.StageController;
 import com.kingston.chat.util.I18n;
 import com.kingston.chat.util.SchedulerManager;
-
-import com.luv.face2face.protobuf.generate.cli2srv.login.Auth;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+
 import static com.luv.face2face.protobuf.generate.cli2srv.login.Auth.*;
+import static com.luv.face2face.protobuf.generate.ser2cli.login.Server.*;
 
 public class LoginManager {
 
-	private static LoginManager instance = new  LoginManager();
+    private static LoginManager instance = new LoginManager();
 
-	private LoginManager() {}
+    private LoginManager() {
+    }
 
-	public static LoginManager getInstance() {
-		return instance;
-	}
+    public static LoginManager getInstance() {
+        return instance;
+    }
 
-	public void beginToLogin(long userId, String password) {
-		RequestLoginMsg.Builder builder = RequestLoginMsg.newBuilder();
-		builder.setUserId(userId);
-		builder.setPassword(password);
+    private static void displayLoginError() {
+        StageController stageController = UiBaseService.INSTANCE.getStageController();
+        Stage stage = stageController.getStageBy(R.id.LoginView);
+        Pane errPane = (Pane) stage.getScene().getRoot().lookup("#errorPane");
+        errPane.setVisible(true);
+        Label errTips = (Label) stage.getScene().getRoot().lookup("#errorTips");
+        errTips.setText(I18n.get("login.operateFailed"));
+    }
+
+    public void beginToLogin(long userId, String password) {
+        RequestLoginMsg.Builder builder = RequestLoginMsg.newBuilder();
+        builder.setUserId(userId);
+        builder.setPassword(password);
 //		ReqUserLoginPacket reqLogin= new ReqUserLoginPacket();
 //		reqLogin.setUserId(userId);
 //		reqLogin.setUserPwd(password);
-		System.err.println("向服务端发送登录请求");
-		IoBaseService.INSTANCE.sendServerRequest(builder.build());
-	}
+        System.err.println("向服务端发送登录请求");
+        IoBaseService.INSTANCE.sendServerRequest(builder.build());
+    }
 
-	public void handleLoginResponse(ResUserLoginPacket resp) {
-		boolean isSucc = resp.getIsValid() == Constants.TRUE;
-		if (isSucc) {
-			UiBaseService.INSTANCE.runTaskInFxThread(() -> {
-				redirecToMainPanel();
-			});
+//	public void handleLoginResponse(ResUserLoginPacket resp) {
+//		boolean isSucc = resp.getIsValid() == Constants.TRUE;
+//		if (isSucc) {
+//			UiBaseService.INSTANCE.runTaskInFxThread(() -> {
+//				redirectToMainPanel();
+//			});
+//
+//			registerHeartTimer();
+//		}else {
+//			UiBaseService.INSTANCE.runTaskInFxThread(() -> {
+//				StageController stageController = UiBaseService.INSTANCE.getStageController();
+//				Stage stage = stageController.getStageBy(R.id.LoginView);
+//				Pane errPane = (Pane)stage.getScene().getRoot().lookup("#errorPane");
+//				errPane.setVisible(true);
+//				Label errTips = (Label)stage.getScene().getRoot().lookup("#errorTips");
+//				errTips.setText(I18n.get("login.operateFailed"));
+//			});
+//		}
+//	}
 
-			registerHeartTimer();
-		}else {
-			UiBaseService.INSTANCE.runTaskInFxThread(() -> {
-				StageController stageController = UiBaseService.INSTANCE.getStageController();
-				Stage stage = stageController.getStageBy(R.id.LoginView);
-				Pane errPane = (Pane)stage.getScene().getRoot().lookup("#errorPane");
-				errPane.setVisible(true);
-				Label errTips = (Label)stage.getScene().getRoot().lookup("#errorTips");
-				errTips.setText(I18n.get("login.operateFailed"));
-			});
-		}
-	}
+    public void handleLoginSuccessResponse(ResServerLoginSucc loginSucc) {
 
-	private void redirecToMainPanel() {
-		StageController stageController = UiBaseService.INSTANCE.getStageController();
-		stageController.switchStage(R.id.MainView, R.id.LoginView);
-	}
+        UiBaseService.INSTANCE.runTaskInFxThread(this::redirectToMainPanel);
+    }
 
-	/**
-	 * 注册心跳事件
-	 */
-	private void registerHeartTimer() {
-		SchedulerManager.INSTANCE.scheduleAtFixedRate("HEART_BEAT", ()->{
-			IoBaseService.INSTANCE.sendServerRequest(new ReqHeartBeatPacket());
-		}, 0, 5*1000);
-	}
+    public void handleLoginFailedResponse(ResServerLoginFailed loginFailed) {
+        UiBaseService.INSTANCE.runTaskInFxThread(LoginManager::displayLoginError);
+    }
+
+    private void redirectToMainPanel() {
+        StageController stageController = UiBaseService.INSTANCE.getStageController();
+        stageController.switchStage(R.id.MainView, R.id.LoginView);
+    }
+
+    /**
+     * 注册心跳事件
+     */
+    private void registerHeartTimer() {
+        SchedulerManager.INSTANCE.scheduleAtFixedRate("HEART_BEAT", () -> {
+            IoBaseService.INSTANCE.sendServerRequest(new ReqHeartBeatPacket());
+        }, 0, 5 * 1000);
+    }
 
 }

@@ -4,7 +4,7 @@ import com.google.protobuf.Message;
 import com.kingston.chat.handler.login.LoginFailedHandler;
 import com.kingston.chat.handler.login.LoginSuccessHandler;
 import com.kingston.chat.handler.login.RegistryFailerHandler;
-import com.kingston.chat.handler.login.RegistrySuccessHanlder;
+import com.kingston.chat.handler.login.RegistrySuccessHandler;
 import com.luv.face2face.protobuf.analysis.ParserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class DefaultHandlerManager {
         setClassMap(parserManager.getPacketTypeToProtocolNum());
         classMessageHandlerMap.put(ResServerLoginSucc.class, new LoginSuccessHandler());
         classMessageHandlerMap.put(ResServerLoginFailed.class, new LoginFailedHandler());
-        classMessageHandlerMap.put(ResServerRegisterSucc.class, new RegistrySuccessHanlder());
+        classMessageHandlerMap.put(ResServerRegisterSucc.class, new RegistrySuccessHandler());
         classMessageHandlerMap.put(ResServerRegisterFailed.class, new RegistryFailerHandler());
     }
 

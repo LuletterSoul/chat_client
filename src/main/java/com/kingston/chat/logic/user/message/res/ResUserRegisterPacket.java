@@ -49,7 +49,7 @@ public class ResUserRegisterPacket extends AbstractPacket {
 
 	@Override
 	public void execPacket() {
-		UserManager.getInstance().handleRegisterResponse(getResultCode(), getMessage());
+//		UserManager.getInstance().handleRegistrySuccResponse(getResultCode(), getMessage());
 	}
 
 	@Override
