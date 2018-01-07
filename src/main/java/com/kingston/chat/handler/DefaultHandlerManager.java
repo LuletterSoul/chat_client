@@ -1,17 +1,22 @@
 package com.kingston.chat.handler;
 
 import com.google.protobuf.Message;
+import com.kingston.chat.handler.friend.FriendLoginHandler;
+import com.kingston.chat.handler.friend.FriendLogoutHandler;
+import com.kingston.chat.handler.friend.ListFriendsHandler;
 import com.kingston.chat.handler.login.LoginFailedHandler;
 import com.kingston.chat.handler.login.LoginSuccessHandler;
 import com.kingston.chat.handler.login.RegistryFailerHandler;
 import com.kingston.chat.handler.login.RegistrySuccessHandler;
 import com.luv.face2face.protobuf.analysis.ParserManager;
+import com.luv.face2face.protobuf.generate.ser2cli.friend.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.luv.face2face.protobuf.generate.ser2cli.friend.Server.*;
 import static com.luv.face2face.protobuf.generate.ser2cli.login.Server.*;
 
 /**
@@ -42,6 +47,9 @@ public class DefaultHandlerManager {
         classMessageHandlerMap.put(ResServerLoginFailed.class, new LoginFailedHandler());
         classMessageHandlerMap.put(ResServerRegisterSucc.class, new RegistrySuccessHandler());
         classMessageHandlerMap.put(ResServerRegisterFailed.class, new RegistryFailerHandler());
+        classMessageHandlerMap.put(ResListFriends.class, new ListFriendsHandler());
+        classMessageHandlerMap.put(ResFriendLogin.class, new FriendLoginHandler());
+        classMessageHandlerMap.put(ResFriendLogout.class, new FriendLogoutHandler());
     }
 
 

@@ -9,12 +9,12 @@ import java.util.TreeMap;
 import com.kingston.chat.base.Constants;
 import com.kingston.chat.base.UiBaseService;
 import com.kingston.chat.fxextend.event.DoubleClickEventHandler;
-import com.kingston.chat.logic.friend.model.FriendItemVo;
 import com.kingston.chat.logic.user.UserManager;
 import com.kingston.chat.ui.R;
 import com.kingston.chat.ui.StageController;
 import com.kingston.chat.util.ImageUtil;
 
+import com.luv.face2face.protobuf.generate.ser2cli.friend.Server;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
@@ -26,6 +26,8 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
+import static com.luv.face2face.protobuf.generate.ser2cli.friend.Server.*;
 
 public class FriendManager {
 
@@ -47,11 +49,8 @@ public class FriendManager {
 	 */
 	public void onFriendLogin(long friendId) {
 		FriendItemVo friend = friends.get(friendId);
-		if (friend != null) {
-			friend.setOnline(Constants.ONLINE_STATUS);
-			List<FriendItemVo> friendItems = new ArrayList<>(friends.values());
-			receiveFriendsList(friendItems);
-		}
+		friends.put(friendId, updateFriendItemVo(friend, true));
+		ResListFriends.Builder builder = ResListFriends.newBuilder();
 	}
 
 	/**
@@ -60,22 +59,33 @@ public class FriendManager {
 	 */
 	public void onFriendLogout(long friendId) {
 		FriendItemVo friend = friends.get(friendId);
-		if (friend != null) {
-			friend.setOnline(Constants.OFFLINE_STATUS);
-			List<FriendItemVo> friendItems = new ArrayList<>(friends.values());
-			receiveFriendsList(friendItems);
-		}
+		friends.put(friendId, updateFriendItemVo(friend, false));
+		ResListFriends.Builder builder = ResListFriends.newBuilder();
+		receiveFriendsList(builder.addAllFriend(friends.values()).build());
 	}
 
-	public void receiveFriendsList(List<FriendItemVo> friendItems) {
+	private FriendItemVo updateFriendItemVo(FriendItemVo friend,boolean isOnline) {
+		FriendItemVo.Builder builder = FriendItemVo.newBuilder();
+		builder.setIsOnline(isOnline);
+		builder.setUserId(friend.getUserId());
+		builder.setNickname(friend.getNickname());
+		builder.setRemark(friend.getRemark());
+		builder.setSex(friend.getSex());
+		builder.setGroupName(friend.getGroupName());
+		builder.setGroupId(friend.getGroupId());
+		return builder.build();
+	}
+
+	public void receiveFriendsList(ResListFriends resListFriends) {
 		friends.clear();
-		for (FriendItemVo item:friendItems) {
+		List<FriendItemVo> friendItemVos = resListFriends.getFriendList();
+		for (FriendItemVo item:friendItemVos) {
 			friends.put(item.getUserId(), item);
 		}
-		rangeToGroupFriends(friendItems);
+		rangeToGroupFriends(friendItemVos);
 
 		UiBaseService.INSTANCE.runTaskInFxThread(() -> {
-			refreshMyFriendsView(friendItems);
+			refreshMyFriendsView(friendItemVos);
 		});
 
 	}
@@ -105,14 +115,14 @@ public class FriendManager {
 		this.groupFriends.clear();
 		TreeMap<Integer, List<FriendItemVo>> groupFriends = new TreeMap<>();
 		for (FriendItemVo item:friendItems) {
-			int groupId= item.getGroup();
-			List<FriendItemVo> frendsByGroup = groupFriends.get(groupId);
-			if (frendsByGroup == null) {
-				frendsByGroup = new ArrayList<>();
-				groupFriends.put(groupId, frendsByGroup);
+			int groupId= item.getGroupId();
+			List<FriendItemVo> friendsByGroup = groupFriends.get(groupId);
+			if (friendsByGroup == null) {
+				friendsByGroup = new ArrayList<>();
+				groupFriends.put(groupId, friendsByGroup);
 			}
 			this.groupNames.put(groupId, item.getGroupName());
-			frendsByGroup.add(item);
+			friendsByGroup.add(item);
 		}
 		this.groupFriends = groupFriends;
 	}
@@ -123,7 +133,7 @@ public class FriendManager {
 		int onlineCount = 0;
 		StageController stageController = UiBaseService.INSTANCE.getStageController();
 		for (FriendItemVo item:friendItems) {
-			if (item.isOnlie()) {
+			if (item.getIsOnline()) {
 				onlineCount++;
 			}
 			Pane pane = stageController.load(R.layout.FriendItem, Pane.class);
@@ -141,7 +151,7 @@ public class FriendManager {
 		Label autographLabel = (Label) itemUi.lookup("#signature");
 		autographLabel.setText(friendVo.getSignature());
 		Hyperlink usernameUi = (Hyperlink) itemUi.lookup("#userName");
-		usernameUi.setText(friendVo.getFullName());
+		usernameUi.setText(friendVo.getNickname());
 
 		//隐藏域，聊天界面用
 		Label userIdUi = (Label)itemUi.lookup("#friendId");
@@ -149,7 +159,7 @@ public class FriendManager {
 
 		ImageView headImage = (ImageView) itemUi.lookup("#headIcon");
 
-		if (!friendVo.isOnlie()) {
+		if (!friendVo.getIsOnline()) {
 			headImage.setImage(ImageUtil.convertToGray(headImage.getImage()));
 		}
 
@@ -192,7 +202,7 @@ public class FriendManager {
 		userIdUi.setText(String.valueOf(targetFriend.getUserId()));
 		Hyperlink userNameUi = (Hyperlink)chatStage.getScene().getRoot().lookup("#userName");
 		Label signatureUi = (Label)chatStage.getScene().getRoot().lookup("#signature");
-		userNameUi.setText(targetFriend.getFullName());
+		userNameUi.setText(targetFriend.getNickname());
 		signatureUi.setText(targetFriend.getSignature());
 	}
 
