@@ -2,9 +2,10 @@ package com.kingston.chat.net.transport;
 
 import java.net.InetSocketAddress;
 
-import com.kingston.chat.net.codec.PacketDecoder;
-import com.kingston.chat.net.codec.PacketEncoder;
 
+import com.luv.face2face.protobuf.analysis.ParserManager;
+import com.luv.face2face.protobuf.code.PacketDecoder;
+import com.luv.face2face.protobuf.code.PacketEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -30,6 +31,11 @@ public class SocketClient {
 	}
 
 	public void connect(String host,int port) throws Exception {
+		PacketDecoder decoder = new PacketDecoder();
+		PacketEncoder encoder = new PacketEncoder();
+		ParserManager parserManager =new ParserManager();
+		decoder.setParserManager(parserManager);
+		encoder.setParserManager(parserManager);
 		EventLoopGroup group = new NioEventLoopGroup(1);
 		try{
 			Bootstrap b  = new Bootstrap();
@@ -40,9 +46,9 @@ public class SocketClient {
 				protected void initChannel(SocketChannel arg0)
 						throws Exception {
 					ChannelPipeline pipeline = arg0.pipeline();
-					pipeline.addLast(new PacketDecoder(1024*1, 0,4,0,4));
-					pipeline.addLast(new LengthFieldPrepender(4));
-					pipeline.addLast(new PacketEncoder());
+					pipeline.addLast(encoder);
+//					pipeline.addLast(new LengthFieldPrepender(4));
+					pipeline.addLast(decoder);
 					pipeline.addLast(new ClientTransportHandler());
 				}
 

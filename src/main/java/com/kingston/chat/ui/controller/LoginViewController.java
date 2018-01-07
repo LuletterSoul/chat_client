@@ -74,8 +74,8 @@ public class LoginViewController implements ControlledStage, Initializable {
 			return;
 		}
 
-		loginProgress.setVisible(true);
-		login.setVisible(false);
+//		loginProgress.setVisible(true);
+//		login.setVisible(false);
 
 		LoginManager.getInstance().beginToLogin(useId, psw);
 	}

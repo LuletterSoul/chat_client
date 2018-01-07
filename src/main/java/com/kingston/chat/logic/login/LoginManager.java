@@ -11,9 +11,12 @@ import com.kingston.chat.ui.StageController;
 import com.kingston.chat.util.I18n;
 import com.kingston.chat.util.SchedulerManager;
 
+import com.luv.face2face.protobuf.generate.cli2srv.login.Auth;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
+import static com.luv.face2face.protobuf.generate.cli2srv.login.Auth.*;
 
 public class LoginManager {
 
@@ -26,11 +29,14 @@ public class LoginManager {
 	}
 
 	public void beginToLogin(long userId, String password) {
-		ReqUserLoginPacket reqLogin= new ReqUserLoginPacket();
-		reqLogin.setUserId(userId);
-		reqLogin.setUserPwd(password);
+		RequestLoginMsg.Builder builder = RequestLoginMsg.newBuilder();
+		builder.setUserId(userId);
+		builder.setPassword(password);
+//		ReqUserLoginPacket reqLogin= new ReqUserLoginPacket();
+//		reqLogin.setUserId(userId);
+//		reqLogin.setUserPwd(password);
 		System.err.println("向服务端发送登录请求");
-		IoBaseService.INSTANCE.sendServerRequest(reqLogin);
+		IoBaseService.INSTANCE.sendServerRequest(builder.build());
 	}
 
 	public void handleLoginResponse(ResUserLoginPacket resp) {
