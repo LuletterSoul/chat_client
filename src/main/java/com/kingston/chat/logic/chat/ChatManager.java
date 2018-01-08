@@ -57,8 +57,10 @@ public class ChatManager {
 			Pane pane = null;
 			if (sourceId == UserManager.getInstance().getMyUserId()) {
 				pane = stageController.load(R.layout.PrivateChatItemRight, Pane.class);
+				log.info("update message user[{}] left plane", UserManager.getInstance().getMyProfile().getUserName());
 			}else {
 				pane = stageController.load(R.layout.PrivateChatItemLeft, Pane.class);
+				log.info("update message user[{}] right plane", sourceId);
 			}
 
 			decorateChatRecord(content, pane);

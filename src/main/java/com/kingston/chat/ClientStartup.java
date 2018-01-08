@@ -28,11 +28,11 @@ public class ClientStartup extends Application {
 		stageController.setPrimaryStage("root", stage);
 
 		Stage loginStage = stageController.loadStage(R.id.LoginView, R.layout.LoginView,
-								StageStyle.UNDECORATED);
+								StageStyle.DECORATED);
 		loginStage.setTitle("QQ");
 
-		stageController.loadStage(R.id.RegisterView, R.layout.RegisterView, StageStyle.UNDECORATED);
-		Stage mainStage = stageController.loadStage(R.id.MainView, R.layout.MainView, StageStyle.UNDECORATED);
+		stageController.loadStage(R.id.RegisterView, R.layout.RegisterView, StageStyle.DECORATED);
+		Stage mainStage = stageController.loadStage(R.id.MainView, R.layout.MainView, StageStyle.DECORATED);
 
 		//把主界面放在右上方
 		Screen screen = Screen.getPrimary();

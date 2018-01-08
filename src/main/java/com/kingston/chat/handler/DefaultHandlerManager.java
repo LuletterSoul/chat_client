@@ -1,11 +1,14 @@
 package com.kingston.chat.handler;
 
 import com.google.protobuf.Message;
+import com.kingston.chat.handler.chat.ResUserSingleChatHandler;
 import com.kingston.chat.handler.friend.FriendLoginHandler;
 import com.kingston.chat.handler.friend.FriendLogoutHandler;
 import com.kingston.chat.handler.friend.ListFriendsHandler;
 import com.kingston.chat.handler.login.*;
+import com.kingston.chat.logic.chat.message.res.ResChatToUserPacket;
 import com.luv.face2face.protobuf.analysis.ParserManager;
+import com.luv.face2face.protobuf.generate.cli2srv.chat.Chat;
 import com.luv.face2face.protobuf.generate.ser2cli.friend.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.luv.face2face.protobuf.generate.cli2srv.chat.Chat.*;
 import static com.luv.face2face.protobuf.generate.ser2cli.friend.Server.*;
 import static com.luv.face2face.protobuf.generate.ser2cli.login.Server.*;
 
@@ -48,6 +52,7 @@ public class DefaultHandlerManager {
         classMessageHandlerMap.put(ResFriendLogin.class, new FriendLoginHandler());
         classMessageHandlerMap.put(ResFriendLogout.class, new FriendLogoutHandler());
         classMessageHandlerMap.put(ResServerRefreshProfile.class, new RefreshProfileHandler());
+        classMessageHandlerMap.put(ResponseChatToUserMsg.class, new ResUserSingleChatHandler());
     }
 
 

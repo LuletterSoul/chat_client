@@ -3,7 +3,7 @@ package com.kingston.chat.net.transport;
 public class ClientConfigs {
 
 	/**  服务器ip */
-	public static String REMOTE_SERVER_IP = "127.0.0.1";
+	public static String REMOTE_SERVER_IP = "47.95.113.210";
 	/**  服务器端口 */
 	public static int REMOTE_SERVER_PORT = 8088;
 	/**  客户端本地ip */

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Hyperlink fx:id="nameUi" layoutX="70.0" layoutY="-2.0" text="张三">
          <font>
@@ -21,7 +22,7 @@
          <font>
             <Font size="15.0" />
          </font></Label>
-      <Label fx:id="contentUi" alignment="BOTTOM_RIGHT" contentDisplay="RIGHT" layoutX="7.0" layoutY="23.0" maxWidth="525.0" prefHeight="32.0" prefWidth="370.0" style="-fx-background-color: #3b84ea; -fx-background-radius: 10;" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+      <Label fx:id="contentUi" alignment="BOTTOM_RIGHT" contentDisplay="RIGHT" layoutX="222.0" layoutY="23.0" maxWidth="525.0" mouseTransparent="true" prefHeight="32.0" prefWidth="155.0" style="-fx-background-color: #3b84ea; -fx-background-radius: 10;" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>
