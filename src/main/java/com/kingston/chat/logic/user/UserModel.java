@@ -2,58 +2,45 @@ package com.kingston.chat.logic.user;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import lombok.*;
 
 /**
  * 用户个人信息
+ *
  * @author kingston
  */
+@Data
+@Getter
 public class UserModel {
 
-	private long userId;
-	/** 账号昵称 */
-	private StringProperty userName = new SimpleStringProperty("");
-	/** 个性签名 */
-	private StringProperty signature = new SimpleStringProperty("");
-	/** 性别 */
-	private byte sex;
+    private long userId;
+    /**
+     * 账号昵称
+     */
+    private StringProperty userName = new SimpleStringProperty("");
+    /**
+     * 个性签名
+     */
+    private StringProperty signature = new SimpleStringProperty("");
+    /**
+     * 性别
+     */
+    private String sex;
 
-	public long getUserId() {
-		return userId;
-	}
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
+//    public final StringProperty userNameProperty() {
+//        signature.
+//        return userName;
+//    }
+//
+//    public final StringProperty signaturePropertiy() {
+//        return this.signature;
+//    }
 
-	public final StringProperty userNameProperty() {
-		return userName;
-	}
-	public String getUserName() {
-		return userName.get();
-	}
-	public void setUserName(String userName) {
-		this.userName.set(userName);
-	}
-	public String getSignature() {
-		return signature.get();
-	}
-	public void setSignature(String signature) {
-		this.signature.set(signature);
-	}
-	public final StringProperty signaturePropertiy() {
-		return this.signature;
-	}
+    public void setUserName(String userName) {
+        this.userName.set(userName);
+    }
 
-	public byte getSex() {
-		return sex;
-	}
-	public void setSex(byte sex) {
-		this.sex = sex;
-	}
-
-	@Override
-	public String toString() {
-		return "MyProfile [userId=" + userId + ", userName=" + userName + ", signature=" + signature + ", sex=" + sex
-				+ "]";
-	}
-
+    public void setSignature(String signature) {
+        this.signature.set(signature);
+    }
 }

@@ -4,10 +4,7 @@ import com.google.protobuf.Message;
 import com.kingston.chat.handler.friend.FriendLoginHandler;
 import com.kingston.chat.handler.friend.FriendLogoutHandler;
 import com.kingston.chat.handler.friend.ListFriendsHandler;
-import com.kingston.chat.handler.login.LoginFailedHandler;
-import com.kingston.chat.handler.login.LoginSuccessHandler;
-import com.kingston.chat.handler.login.RegistryFailerHandler;
-import com.kingston.chat.handler.login.RegistrySuccessHandler;
+import com.kingston.chat.handler.login.*;
 import com.luv.face2face.protobuf.analysis.ParserManager;
 import com.luv.face2face.protobuf.generate.ser2cli.friend.Server;
 import org.slf4j.Logger;
@@ -50,6 +47,7 @@ public class DefaultHandlerManager {
         classMessageHandlerMap.put(ResListFriends.class, new ListFriendsHandler());
         classMessageHandlerMap.put(ResFriendLogin.class, new FriendLoginHandler());
         classMessageHandlerMap.put(ResFriendLogout.class, new FriendLogoutHandler());
+        classMessageHandlerMap.put(ResServerRefreshProfile.class, new RefreshProfileHandler());
     }
 
 

@@ -11,37 +11,40 @@ import com.kingston.chat.util.I18n;
 
 import com.luv.face2face.protobuf.generate.cli2srv.login.Auth;
 import com.luv.face2face.protobuf.generate.ser2cli.login.Server;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.luv.face2face.protobuf.generate.cli2srv.login.Auth.*;
+import static com.luv.face2face.protobuf.generate.ser2cli.login.Server.*;
 
 @Slf4j
 public class UserManager {
 
     private static UserManager instance = new UserManager();
 
-    private static StageController stageController;
-    private static Stage stage;
-    private static Label errorTips;
-
     private UserModel profile = new UserModel();
 
     public static UserManager getInstance() {
-//        stageController = UiBaseService.INSTANCE.getStageController();
-//        stage = stageController.getStageBy(R.id.RegisterView);
-//        errorTips = (Label) stage.getScene().getRoot().lookup("#errorText");
         return instance;
     }
 
-    public void updateMyProfile(ResUserInfoPacket userInfo) {
-        profile.setSex(userInfo.getSex());
-        profile.setSignature(userInfo.getSignature());
-        profile.setUserId(userInfo.getUserId());
-        profile.setUserName(userInfo.getUserName());
+//    public void updateMyProfile(ResUserInfoPacket userInfo) {
+//        profile.setSex(userInfo.getSex());
+//        profile.setSignature(userInfo.getSignature());
+//        profile.setUserId(userInfo.getUserId());
+//        profile.setUserName(userInfo.getUserName());
+//    }
+
+    public void updateMyProfile(ResServerRefreshProfile profile) {
+        this.profile.setSex(profile.getSex());
+        this.profile.setSignature(profile.getSignature());
+        this. profile.setUserId(profile.getUserId());
+        this.profile.setUserName(profile.getNickname());
     }
+
 
     public UserModel getMyProfile() {
         return this.profile;
@@ -53,19 +56,14 @@ public class UserManager {
 
     public void registerAccount(byte sex, String nickName, String password) {
         RequestUserRegisterMsg.Builder builder = RequestUserRegisterMsg.newBuilder();
-
         builder.setNickname(nickName);
         builder.setPassword(password);
         builder.setSex("男");
-//		ReqUserRegisterPacket request = new ReqUserRegisterPacket();
-//		request.setNickName(nickName);
-//		request.setPassword(password);
-//		request.setSex(sex);
         System.err.println("向服务端发送注册请求");
         IoBaseService.INSTANCE.sendServerRequest(builder.build());
     }
 
-    public void handleRegistrySuccResponse(Server.ResServerRegisterSucc resServerRegisterSucc) {
+    public void handleRegistrySuccResponse(ResServerRegisterSucc resServerRegisterSucc) {
 //		boolean isSucc = resultCode == Constants.TRUE;
         StageController stageController = UiBaseService.INSTANCE.getStageController();
         Stage stage = stageController.getStageBy(R.id.RegisterView);
@@ -77,7 +75,7 @@ public class UserManager {
         });
     }
 
-    public void handleRegisterFailerResponse(Server.ResServerRegisterFailed resServerRegisterFaileds) {
+    public void handleRegisterFailerResponse(ResServerRegisterFailed resServerRegisterFaileds) {
         StageController stageController = UiBaseService.INSTANCE.getStageController();
         Stage stage = stageController.getStageBy(R.id.RegisterView);
         Label errorTips = (Label) stage.getScene().getRoot().lookup("#errorText");

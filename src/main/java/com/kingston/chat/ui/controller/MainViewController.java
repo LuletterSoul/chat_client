@@ -46,8 +46,8 @@ public class MainViewController implements ControlledStage, Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		username.textProperty().bind(userModel.userNameProperty());
-		signature.textProperty().bind(userModel.signaturePropertiy());
+		username.textProperty().bind(userModel.getUserName());
+		signature.textProperty().bind(userModel.getSignature());
 	}
 
 	@FXML
@@ -136,9 +136,9 @@ public class MainViewController implements ControlledStage, Initializable{
 		return stageController.getStageBy(R.id.MainView);
 	}
 
-	public void refreshProfileInfo(String name) {
-		userModel.setUserName(name);
-	}
+//	public void refreshProfileInfo(String name) {
+//		userModel.setUserName(name);
+//	}
 
 
 }

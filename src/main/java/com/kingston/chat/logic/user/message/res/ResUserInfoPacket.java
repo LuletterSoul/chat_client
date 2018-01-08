@@ -25,7 +25,7 @@ public class ResUserInfoPacket extends AbstractPacket {
 	@Override
 	public void execPacket() {
 		UiBaseService.INSTANCE.runTaskInFxThread(()->{
-			UserManager.getInstance().updateMyProfile(this);
+//			UserManager.getInstance().updateMyProfile(this);
 		});
 	}
 
