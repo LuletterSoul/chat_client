@@ -20,6 +20,6 @@ public class ResUserSingleChatHandler implements MessageHandler {
     public void handler(Message message) {
         Chat.ResponseChatToUserMsg msg = (Chat.ResponseChatToUserMsg) message;
 //        ChatManager.getInstance().receiveFriendPrivateMessage(msg.getFromToUserId(), msg.getContent());
-        ChatManager.getInstance().receiveFriendPrivateMessage(msg.getPushToUserId(), msg.getContent());
+        ChatManager.getInstance().receiveFriendPrivateMessage(msg.getFromToUserId(), msg.getContent());
     }
 }

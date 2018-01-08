@@ -3,6 +3,7 @@ package com.kingston.chat.logic.login;
 import com.kingston.chat.base.IoBaseService;
 import com.kingston.chat.base.UiBaseService;
 import com.kingston.chat.logic.login.message.req.ReqHeartBeatPacket;
+import com.kingston.chat.logic.user.UserManager;
 import com.kingston.chat.ui.R;
 import com.kingston.chat.ui.StageController;
 import com.kingston.chat.util.I18n;
@@ -36,6 +37,7 @@ public class LoginManager {
     }
 
     public void beginToLogin(long userId, String password) {
+        UserManager.getInstance().setPassword(password);
         RequestLoginMsg.Builder builder = RequestLoginMsg.newBuilder();
         builder.setUserId(userId);
         builder.setPassword(password);
@@ -67,7 +69,7 @@ public class LoginManager {
 //	}
 
     public void handleLoginSuccessResponse(ResServerLoginSucc loginSucc) {
-
+        UserManager.getInstance().setLogined(true);
         UiBaseService.INSTANCE.runTaskInFxThread(this::redirectToMainPanel);
     }
 

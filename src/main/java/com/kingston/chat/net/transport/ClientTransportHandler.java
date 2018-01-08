@@ -4,18 +4,23 @@ import com.google.protobuf.Message;
 import com.kingston.chat.base.IoBaseService;
 import com.kingston.chat.handler.DefaultHandlerManager;
 import com.kingston.chat.handler.MessageDispatcher;
+import com.kingston.chat.logic.login.LoginManager;
+import com.kingston.chat.logic.user.UserManager;
 import com.kingston.chat.net.PacketManager;
 import com.kingston.chat.net.message.AbstractPacket;
 
 import com.luv.face2face.protobuf.analysis.ParserManager;
+import com.luv.face2face.service.LoginService;
 import com.luv.face2face.service.session.ChannelUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class ClientTransportHandler extends ChannelHandlerAdapter implements MessageDispatcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientTransportHandler.class);
@@ -28,7 +33,12 @@ public class ClientTransportHandler extends ChannelHandlerAdapter implements Mes
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        LOGGER.info("channel [] active.................", ctx.channel().remoteAddress());
+        UserManager userManager = UserManager.getInstance();
+        if (userManager.isLogined() && userManager.isDisconnectException()) {
+            LoginManager.getInstance().beginToLogin(userManager.getMyUserId(), userManager.getPassword());
+            log.debug("User[{}] reconnect again.", userManager.getMyProfile());
+        }
+        log.debug(".................................channel [] active.................", ctx.channel().remoteAddress());
         //注册session
         IoBaseService.INSTANCE.registerSession(ctx.channel());
     }
@@ -72,6 +82,8 @@ public class ClientTransportHandler extends ChannelHandlerAdapter implements Mes
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         System.err.println("客户端关闭3");
+        //用户非正常关闭
+        UserManager.getInstance().setDisconnectException(true);
         Channel channel = ctx.channel();
         cause.printStackTrace();
         if (channel.isActive()) {

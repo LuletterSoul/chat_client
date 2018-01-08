@@ -13,6 +13,5 @@ import com.google.protobuf.Message;
  * 客户端不同类型消息包的处理器
  */
 public interface MessageHandler {
-
     void handler(Message message);
 }

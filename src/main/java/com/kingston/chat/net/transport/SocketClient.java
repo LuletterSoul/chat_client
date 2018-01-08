@@ -15,7 +15,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.stream.ChunkedWriteHandler;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SocketClient {
 
 	/** 当前重接次数*/
@@ -49,6 +52,7 @@ public class SocketClient {
 					pipeline.addLast(encoder);
 //					pipeline.addLast(new LengthFieldPrepender(4));
 					pipeline.addLast(decoder);
+					pipeline.addLast(new ChunkedWriteHandler());
 					pipeline.addLast(new ClientTransportHandler());
 				}
 
@@ -74,7 +78,7 @@ public class SocketClient {
 	private void reConnectServer(){
 		try {
 			Thread.sleep(5000);
-			System.err.println("客户端进行断线重连");
+			log.debug("Client attempt to re-connect server.re-connect time:[{}]", reconnectTimes);
 			connect(ClientConfigs.REMOTE_SERVER_IP,
 					ClientConfigs.REMOTE_SERVER_PORT);
 			reconnectTimes++;

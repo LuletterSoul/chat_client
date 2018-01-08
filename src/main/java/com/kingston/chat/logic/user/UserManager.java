@@ -1,31 +1,44 @@
 package com.kingston.chat.logic.user;
 
-import com.kingston.chat.base.Constants;
 import com.kingston.chat.base.IoBaseService;
 import com.kingston.chat.base.UiBaseService;
-import com.kingston.chat.logic.user.message.req.ReqUserRegisterPacket;
-import com.kingston.chat.logic.user.message.res.ResUserInfoPacket;
 import com.kingston.chat.ui.R;
 import com.kingston.chat.ui.StageController;
-import com.kingston.chat.util.I18n;
 
-import com.luv.face2face.protobuf.generate.cli2srv.login.Auth;
-import com.luv.face2face.protobuf.generate.ser2cli.login.Server;
-import javafx.beans.property.SimpleStringProperty;
+import io.netty.channel.*;
+import io.netty.handler.stream.ChunkedFile;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+import java.io.IOException;
+
+
 import static com.luv.face2face.protobuf.generate.cli2srv.login.Auth.*;
+import static com.luv.face2face.protobuf.generate.ser2cli.file.Server.*;
 import static com.luv.face2face.protobuf.generate.ser2cli.login.Server.*;
 
 @Slf4j
+@Setter
+@Getter
 public class UserManager {
 
     private static UserManager instance = new UserManager();
 
     private UserModel profile = new UserModel();
+
+    private String password;
+
+    //登录过
+    private boolean logined = false;
+
+    //意外登出
+    private boolean disconnectException = false;
+
 
     public static UserManager getInstance() {
         return instance;
@@ -41,7 +54,7 @@ public class UserManager {
     public void updateMyProfile(ResServerRefreshProfile profile) {
         this.profile.setSex(profile.getSex());
         this.profile.setSignature(profile.getSignature());
-        this. profile.setUserId(profile.getUserId());
+        this.profile.setUserId(profile.getUserId());
         this.profile.setUserName(profile.getNickname());
     }
 
@@ -91,6 +104,57 @@ public class UserManager {
         Stage stage = stageController.getStageBy(R.id.LoginView);
         TextField userIdField = (TextField) stage.getScene().getRoot().lookup("#userId");
         userIdField.setText(String.valueOf(userId));
+    }
+
+    public void handleRequestUploadFile(File file, Long toUserId) {
+//        try {
+//            MagicMatch match = Magic.getMagicMatch(file, false);
+        ReqFileUploadMsg.Builder builder = ReqFileUploadMsg.newBuilder();
+        builder.setFileLength(file.length());
+        builder.setFileName(file.getName());
+        builder.setFileType("exe");
+        builder.setFormUserId(getMyUserId());
+        builder.setLocalPath(file.getPath());
+        builder.setToUserId(toUserId);
+        IoBaseService.INSTANCE.sendServerRequest(builder.build());
+//        }
+//        catch (MagicParseException | MagicMatchNotFoundException | MagicException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+
+    public void receiveResFileUploadPromise(ResFileUploadPromise resFileUploadPromise) {
+        log.debug("Receive response file upload promise.[{}]", resFileUploadPromise.toString());
+        String localPath = resFileUploadPromise.getYourFilePath();
+//        EventLoopGroup group = new NioEventLoopGroup(1);
+//        try{
+//            Bootstrap b  = new Bootstrap();
+//            b.group(group).channel(NioSocketChannel.class)
+//                    .handler(new ChannelInitializer<SocketChannel>(){
+//                        @Override
+//                        protected void initChannel(SocketChannel arg0)
+//                                throws Exception {
+//                            ChannelPipeline pipeline = arg0.pipeline();
+////                            pipeline.addLast(new ClientTransportHandler());
+//                            pipeline.addLast(new ChunkedWriteHandler());
+//                        }
+//
+//                    });
+//
+//            ChannelFuture f = b.connect(new InetSocketAddress(ClientConfigs.REMOTE_SERVER_IP, ClientConfigs.REMOTE_SERVER_PORT))
+//                    .sync();
+//            f.channel().closeFuture().sync();
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
+        Channel channel = IoBaseService.INSTANCE.getChannel();
+//        ChannelPipeline pipeline = channel.pipeline();
+        try {
+            IoBaseService.INSTANCE.getChannel().write(new ChunkedFile(new File(localPath)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

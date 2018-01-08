@@ -21,10 +21,13 @@ public enum IoBaseService {
 
 	private UserConnectSession userConnectSession;
 
+	private Channel channel;
+
 	public void registerSession(Channel channel) {
 
 //		this.session = new IoSession(channel);
 		this.userConnectSession = new UserConnectSession(channel);
+		this.channel = channel;
 	}
 
 	public void sendServerRequest(AbstractPacket request){
@@ -44,5 +47,11 @@ public enum IoBaseService {
 		return this.userConnectSession != null;
 	}
 
+	public UserConnectSession getUserConnectSession() {
+		return userConnectSession;
+	}
 
+	public Channel getChannel() {
+		return channel;
+	}
 }

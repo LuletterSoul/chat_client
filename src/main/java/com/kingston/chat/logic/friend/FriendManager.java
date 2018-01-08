@@ -209,4 +209,9 @@ public class FriendManager {
 		signatureUi.setText(targetFriend.getSignature());
 	}
 
+	public FriendItemVo getFrendItemVoById(Long friendId) {
+		return friends.get(friendId);
+
+	}
+
 }

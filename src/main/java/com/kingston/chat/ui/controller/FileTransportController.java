@@ -1,27 +1,29 @@
 package com.kingston.chat.ui.controller;
 
-import java.io.File;
-import java.io.IOException;
-
 import com.kingston.chat.base.UiBaseService;
 import com.kingston.chat.logic.chat.ChatManager;
-import com.kingston.chat.logic.user.UserManager;
 import com.kingston.chat.ui.ControlledStage;
 import com.kingston.chat.ui.R;
 import com.kingston.chat.ui.StageController;
-
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import lombok.extern.slf4j.Slf4j;
-import net.sf.jmimemagic.*;
 
-@Slf4j
-public class ChatToPointController implements ControlledStage {
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
+/**
+ * @author XiangDe Liu qq313700046@icloud.com .
+ * @version 1.5
+ * created in  18:04 2018/1/8.
+ * @since chat_client
+ */
+
+public class FileTransportController implements ControlledStage, Initializable {
     @FXML
     private Label userIdUi;
 
@@ -38,18 +40,6 @@ public class ChatToPointController implements ControlledStage {
         ChatManager.getInstance().sendMessageTo(userId, message);
     }
 
-    /**
-     * 处理文件上传
-     * @throws IOException
-     */
-    @FXML
-    private void transportFile() throws IOException {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        File file = fileChooser.showOpenDialog(getMyStage());
-        UserManager.getInstance().handleRequestUploadFile(file, Long.parseLong(userIdUi.getText()));
-    }
-
 
     @Override
     public Stage getMyStage() {
@@ -62,7 +52,8 @@ public class ChatToPointController implements ControlledStage {
         UiBaseService.INSTANCE.getStageController().closeStge(R.id.ChatToPoint);
     }
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
 
+    }
 }
-
-

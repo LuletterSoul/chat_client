@@ -11,6 +11,7 @@ import lombok.*;
  */
 @Data
 @Getter
+@Setter
 public class UserModel {
 
     private long userId;
@@ -26,6 +27,8 @@ public class UserModel {
      * 性别
      */
     private String sex;
+
+    private String password;
 
 //    public final StringProperty userNameProperty() {
 //        signature.

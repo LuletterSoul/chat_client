@@ -2,6 +2,8 @@ package com.kingston.chat.handler;
 
 import com.google.protobuf.Message;
 import com.kingston.chat.handler.chat.ResUserSingleChatHandler;
+import com.kingston.chat.handler.file.ResFileUploadCompleteHandler;
+import com.kingston.chat.handler.file.ResFileUploadPromiseHandler;
 import com.kingston.chat.handler.friend.FriendLoginHandler;
 import com.kingston.chat.handler.friend.FriendLogoutHandler;
 import com.kingston.chat.handler.friend.ListFriendsHandler;
@@ -17,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.luv.face2face.protobuf.generate.cli2srv.chat.Chat.*;
+import static com.luv.face2face.protobuf.generate.ser2cli.file.Server.*;
 import static com.luv.face2face.protobuf.generate.ser2cli.friend.Server.*;
 import static com.luv.face2face.protobuf.generate.ser2cli.login.Server.*;
 
@@ -53,6 +56,8 @@ public class DefaultHandlerManager {
         classMessageHandlerMap.put(ResFriendLogout.class, new FriendLogoutHandler());
         classMessageHandlerMap.put(ResServerRefreshProfile.class, new RefreshProfileHandler());
         classMessageHandlerMap.put(ResponseChatToUserMsg.class, new ResUserSingleChatHandler());
+        classMessageHandlerMap.put(ResFileUploadPromise.class, new ResFileUploadPromiseHandler());
+        classMessageHandlerMap.put(ResFileUploadComplete.class, new ResFileUploadCompleteHandler());
     }
 
 

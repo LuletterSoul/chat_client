@@ -24,6 +24,8 @@ public final class R {
 		/** 点对点聊天记录 */
 		public static final String PrivateChatItemLeft = "main/xml/chatItemLeft.fxml";
 		public static final String PrivateChatItemRight = "main/xml/chatItemRight.fxml";
+		public static final String FileUploadCompleteLeft = "main/xml/fileUploadCompleteLeft.fxml";
+		public static final String FileUploadCompleteRight = "main/xml/fileUploadCompleteRight.fxml";
 	}
 
 }
