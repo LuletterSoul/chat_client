@@ -16,36 +16,33 @@ import javafx.stage.Stage;
 
 public class ChatToPointController implements ControlledStage {
 
-	@FXML
-	private Label userIdUi;
+    @FXML
+    private Label userIdUi;
 
-	@FXML
-	private TextArea msgInput;
+    @FXML
+    private TextArea msgInput;
 
-	@FXML
-	private ScrollPane outputMsgUi;
+    @FXML
+    private ScrollPane outputMsgUi;
 
-	@FXML
-	private void sendMessage() throws IOException {
-		final long userId = Long.parseLong(userIdUi.getText());
-		String message = msgInput.getText();
-
-		System.out.println("----send message---" + message);
-
-		ChatManager.getInstance().sendMessageTo(userId, message);
-	}
+    @FXML
+    private void sendMessage() throws IOException {
+        final long userId = Long.parseLong(userIdUi.getText());
+        String message = msgInput.getText();
+        ChatManager.getInstance().sendMessageTo(userId, message);
+    }
 
 
-	@Override
-	public Stage getMyStage() {
-		StageController stageController = UiBaseService.INSTANCE.getStageController();
-		return stageController.getStageBy(R.id.ChatToPoint);
-	}
+    @Override
+    public Stage getMyStage() {
+        StageController stageController = UiBaseService.INSTANCE.getStageController();
+        return stageController.getStageBy(R.id.ChatToPoint);
+    }
 
-	@FXML
-	private void close() {
-		UiBaseService.INSTANCE.getStageController().closeStge(R.id.ChatToPoint);
-	}
+    @FXML
+    private void close() {
+        UiBaseService.INSTANCE.getStageController().closeStge(R.id.ChatToPoint);
+    }
 
 
 }

@@ -17,7 +17,6 @@ import static com.luv.face2face.protobuf.generate.ser2cli.login.Server.*;
 
 @Slf4j
 public class RefreshProfileHandler implements MessageHandler {
-
     @Override
     public void handler(Message message) {
         ResServerRefreshProfile profile = (ResServerRefreshProfile) message;

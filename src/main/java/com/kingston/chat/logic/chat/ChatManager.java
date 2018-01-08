@@ -10,12 +10,17 @@ import com.kingston.chat.logic.user.UserManager;
 import com.kingston.chat.ui.R;
 import com.kingston.chat.ui.StageController;
 
+import com.luv.face2face.protobuf.generate.cli2srv.chat.Chat;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 
+import static com.luv.face2face.protobuf.generate.cli2srv.chat.Chat.*;
+
+@Slf4j
 public class ChatManager {
 
 	private static ChatManager self = new ChatManager();
@@ -26,12 +31,21 @@ public class ChatManager {
 		return self;
 	}
 
-	public void sendMessageTo(long friendId, String content) {
-		ReqChatToUserPacket request = new ReqChatToUserPacket();
-		request.setToUserId(friendId);
-		request.setContent(content);
+//	public void sendMessageTo(long friendId, String content) {
+//		ReqChatToUserPacket request = new ReqChatToUserPacket();
+//		request.setToUserId(friendId);
+//		request.setContent(content);
+//		IoBaseService.INSTANCE.sendServerRequest(request);
+//
+//	}
 
-		IoBaseService.INSTANCE.sendServerRequest(request);
+	public void sendMessageTo(Long friendId, String content) {
+		RequestChatToUserMsg.Builder chatToUserMsg = RequestChatToUserMsg.newBuilder();
+		chatToUserMsg.setChatFromUserId(UserManager.getInstance().getMyUserId());
+		chatToUserMsg.setChatToUserId(friendId);
+		chatToUserMsg.setContent(content);
+		IoBaseService.INSTANCE.sendServerRequest(chatToUserMsg.build());
+		log.debug("Send message to [{}],message content:[{}]", friendId, content);
 	}
 
 	public void receiveFriendPrivateMessage(long sourceId, String content) {

@@ -51,6 +51,8 @@ public class FriendManager {
 		FriendItemVo friend = friends.get(friendId);
 		friends.put(friendId, updateFriendItemVo(friend, true));
 		ResListFriends.Builder builder = ResListFriends.newBuilder();
+		receiveFriendsList(builder.addAllFriend(friends.values()).build());
+
 	}
 
 	/**
@@ -71,6 +73,7 @@ public class FriendManager {
 		builder.setNickname(friend.getNickname());
 		builder.setRemark(friend.getRemark());
 		builder.setSex(friend.getSex());
+		builder.setSignature(friend.getSignature());
 		builder.setGroupName(friend.getGroupName());
 		builder.setGroupId(friend.getGroupId());
 		return builder.build();

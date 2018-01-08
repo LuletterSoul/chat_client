@@ -18,6 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 public class FriendLoginHandler implements MessageHandler {
     @Override
     public void handler(Message message) {
-        FriendManager.getInstance().onFriendLogout(((ResFriendLogin) message).getFriendId());
+        FriendManager.getInstance().onFriendLogin(((ResFriendLogin) message).getFriendId());
     }
 }
