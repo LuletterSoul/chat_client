@@ -31,25 +31,8 @@ public class ResFileUploadCompleteHandler implements MessageHandler {
         Long sourceId = complete.getFileUploadMsg().getFormUserId();
         String fileName = complete.getFileUploadMsg().getFileName();
         String filePath = complete.getServerfilePath();
-        ChatManager.getInstance().handlerFileUploadComplete(sourceId, fileName,complete.getServerfilePath());
-        try {
-            pipeline.addFirst("chunkedClientReadHandler", new ChunkedClientReadHandler(complete.getFileUploadMsg()));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-//        ChatManager.getInstance().handleRequestDownloadFile(sourceId,fileName,filePath);
-
+        ChatManager.getInstance().handlerFileUploadComplete(complete.getFileUploadMsg(), sourceId, fileName, complete.getServerfilePath(), pipeline);
     }
-
-//    private ReqFileDownloadMsg buildReqDownloadFIleMsg(Long sourceId, String fileName, String filePath) {
-//        ReqFileDownloadMsg.Builder builder = ReqFileDownloadMsg.newBuilder();
-//        builder.setFileName(fileName);
-//        builder.setFilePath(filePath);
-//        builder.setFormUserId(UserManager.getInstance().getMyUserId());
-//        builder.setSourceUserId(sourceId);
-//        builder.build();
-//        return builder.build();
-//    }
 
     private ChannelPipeline releaseChunkedWriteHandler() {
         Channel channel = IoBaseService.INSTANCE.getChannel();

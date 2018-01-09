@@ -1,6 +1,7 @@
 package com.kingston.chat.logic.chat;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,6 +12,7 @@ import com.kingston.chat.fxextend.event.DoubleClickEventHandler;
 import com.kingston.chat.logic.chat.message.req.ReqChatToUserPacket;
 import com.kingston.chat.logic.friend.FriendManager;
 import com.kingston.chat.logic.user.UserManager;
+import com.kingston.chat.net.transport.ChunkedClientReadHandler;
 import com.kingston.chat.net.transport.SocketClient;
 import com.kingston.chat.ui.R;
 import com.kingston.chat.ui.StageController;
@@ -95,7 +97,7 @@ public class ChatManager {
     }
 
 
-    public void handlerFileUploadComplete(Long sourceId, String fileName,String serverPath) {
+    public void handlerFileUploadComplete(ReqFileUploadMsg msg,Long sourceId, String fileName,String serverPath,ChannelPipeline pipeline) {
         StageController stageController = UiBaseService.INSTANCE.getStageController();
         Stage stage = stageController.getStageBy(R.id.ChatToPoint);
         VBox msgContainer = (VBox) stage.getScene().getRoot().lookup("#msgContainer");
@@ -125,6 +127,12 @@ public class ChatManager {
                         File file = fileChooser.showSaveDialog(stageController.getStageBy(R.id.ChatToPoint));
                         if (file == null) {
                             return;
+                        }
+                        UserManager.uploadFile = file;
+                        try {
+                            pipeline.addFirst("chunkedClientReadHandler", new ChunkedClientReadHandler(msg));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
                         }
                         handleRequestDownloadFile(sourceId,fileName,serverPath);
                     }
@@ -190,6 +198,32 @@ public class ChatManager {
         builder.setFileDownloadMsg(msg);
         builder.setLocalPath(localPath);
         IoBaseService.INSTANCE.sendServerRequest(builder.build());
+    }
+
+    public void handleDownloadComplete(ResFileDownloadComplete msg) {
+        StageController stageController = UiBaseService.INSTANCE.getStageController();
+        ReqFileDownloadMsg downloadMsg = msg.getFileDownloadMsg();
+        Stage stage = stageController.getStageBy(R.id.ChatToPoint);
+        VBox msgContainer = (VBox) stage.getScene().getRoot().lookup("#msgContainer");
+        UiBaseService.INSTANCE.runTaskInFxThread(() -> {
+            Pane pane = null;
+            if ( downloadMsg.getSourceUserId()== UserManager.getInstance().getMyUserId()) {
+                pane = stageController.load(R.layout.FileUploadCompleteRight, Pane.class);
+                decorateFileNotifyPane(pane, "对方已经收到你的文件:" + downloadMsg.getFileName());
+                Hyperlink _nikename = (Hyperlink) pane.lookup("#nameUi");
+                _nikename.setText(UserManager.getInstance().getMyProfile().getUserName().toString());
+                _nikename.setVisible(false);
+                msgContainer.getChildren().add(pane);
+            } else {
+                pane = stageController.load(R.layout.FileUploadCompleteLeft, Pane.class);
+                Hyperlink _nikename = (Hyperlink) pane.lookup("#nameUi");
+                String _friendNickName = FriendManager.getInstance().getFrendItemVoById(downloadMsg.getSourceUserId()).getNickname();
+                _nikename.setText(_friendNickName);
+                _nikename.setVisible(false);
+                decorateFileNotifyPane(pane, "下载成功");
+                msgContainer.getChildren().add(pane);
+            }
+        });
     }
 
 }

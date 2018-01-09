@@ -2,6 +2,7 @@ package com.kingston.chat.handler;
 
 import com.google.protobuf.Message;
 import com.kingston.chat.handler.chat.ResUserSingleChatHandler;
+import com.kingston.chat.handler.file.ResFileDownloadCompleteHandler;
 import com.kingston.chat.handler.file.ResFileUploadCompleteHandler;
 import com.kingston.chat.handler.file.ResFileUploadPromiseHandler;
 import com.kingston.chat.handler.friend.FriendLoginHandler;
@@ -58,6 +59,7 @@ public class DefaultHandlerManager {
         classMessageHandlerMap.put(ResponseChatToUserMsg.class, new ResUserSingleChatHandler());
         classMessageHandlerMap.put(ResFileUploadPromise.class, new ResFileUploadPromiseHandler());
         classMessageHandlerMap.put(ResFileUploadComplete.class, new ResFileUploadCompleteHandler());
+        classMessageHandlerMap.put(ResFileDownloadComplete.class, new ResFileDownloadCompleteHandler());
     }
 
 

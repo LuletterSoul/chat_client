@@ -32,6 +32,7 @@ import static com.luv.face2face.protobuf.generate.ser2cli.file.Server.ResFileUpl
 @Slf4j
 public class ChunkedClientReadHandler extends ChannelHandlerAdapter
 {
+
     private long fileSize;
 
     private ReqFileUploadMsg uploadMsg;
@@ -62,8 +63,8 @@ public class ChunkedClientReadHandler extends ChannelHandlerAdapter
         String fileName = msg.getFileName();
         String relativePath = "/users" + "/" + msg.getFormUserId();
         log.info("Relative path is ------------>[{}]", relativePath);
-        serverFilePath = FileUtils.getAbsolutePath(relativePath) + "/" + fileName;
-        ofs = new FileOutputStream(serverFilePath);
+//        serverFilePath = FileUtils.getAbsolutePath(relativePath) + "/" + fileName;
+        ofs = new FileOutputStream(UserManager.uploadFile);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class ChunkedClientReadHandler extends ChannelHandlerAdapter
 
             ReqFileDownloadMsg.Builder builder = ReqFileDownloadMsg.newBuilder();
             builder.setFileName(uploadMsg.getFileName());
-            builder.setFilePath(uploadMsg.getLocalPath());
+            builder.setFilePath("//");
             builder.setFormUserId(uploadMsg.getToUserId());
             builder.setSourceUserId(uploadMsg.getFormUserId());
 //            userService.notifyFileReady(builder.build());

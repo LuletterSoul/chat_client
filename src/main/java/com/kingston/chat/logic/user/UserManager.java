@@ -37,6 +37,8 @@ public class UserManager {
     //登录过
     private boolean logined = false;
 
+    public static File uploadFile;
+
     //意外登出
     private boolean disconnectException = false;
 
