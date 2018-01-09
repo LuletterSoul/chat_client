@@ -1,6 +1,7 @@
 package com.kingston.chat.logic.chat;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -10,11 +11,16 @@ import com.kingston.chat.fxextend.event.DoubleClickEventHandler;
 import com.kingston.chat.logic.chat.message.req.ReqChatToUserPacket;
 import com.kingston.chat.logic.friend.FriendManager;
 import com.kingston.chat.logic.user.UserManager;
+import com.kingston.chat.net.transport.SocketClient;
 import com.kingston.chat.ui.R;
 import com.kingston.chat.ui.StageController;
 
 import com.luv.face2face.protobuf.generate.cli2srv.chat.Chat;
 import com.luv.face2face.protobuf.generate.ser2cli.file.Server;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelPipeline;
+import io.netty.handler.stream.ChunkedFile;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import javafx.event.Event;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -115,7 +121,9 @@ public class ChatManager {
                         StageController stageController = UiBaseService.INSTANCE.getStageController();
                         FileChooser fileChooser = new FileChooser();
                         fileChooser.setTitle("Save Resource File");
+                        fileChooser.setInitialFileName(fileName);
                         File file = fileChooser.showSaveDialog(stageController.getStageBy(R.id.ChatToPoint));
+
 //                        UserManager.getInstance().
 //                                handleRequestUploadFile(file, Long.parseLong(userIdUi.getText()));
                     }
@@ -130,6 +138,34 @@ public class ChatManager {
         _createTime.setText(new SimpleDateFormat("yyyy年MM月dd日  HH:mm:ss").format(new Date()));
         Label _body = (Label) pane.lookup("#contentUi");
         _body.setText(text);
+    }
+
+    public void handleRequestUploadFile(File file, Long toUserId) {
+//        try {
+//            MagicMatch match = Magic.getMagicMatch(file, false);
+        ReqFileUploadMsg.Builder builder = ReqFileUploadMsg.newBuilder();
+        builder.setFileLength(file.length());
+        builder.setFileName(file.getName());
+        builder.setFileType("exe");
+        builder.setFormUserId(UserManager.getInstance().getMyUserId());
+        builder.setLocalPath(file.getPath());
+        builder.setToUserId(toUserId);
+        IoBaseService.INSTANCE.sendServerRequest(builder.build());
+//        }
+//        catch (MagicParseException | MagicMatchNotFoundException | MagicException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+
+    public void receiveResFileUploadPromise(ResFileUploadPromise resFileUploadPromise) {
+        log.debug("Receive response file upload promise.[{}]", resFileUploadPromise.toString());
+        String localPath = resFileUploadPromise.getYourFilePath();
+        try {
+            IoBaseService.INSTANCE.getChannel().write(new ChunkedFile(new File(localPath)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

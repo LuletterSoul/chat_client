@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SocketClient {
 
+	public static ChunkedWriteHandler chunkedWriteHandler = new ChunkedWriteHandler();
+
 	/** 当前重接次数*/
 	private int reconnectTimes = 0;
 
@@ -49,10 +51,10 @@ public class SocketClient {
 				protected void initChannel(SocketChannel arg0)
 						throws Exception {
 					ChannelPipeline pipeline = arg0.pipeline();
+//					pipeline.addLast(new ChunkedWriteHandler());
 					pipeline.addLast(encoder);
 //					pipeline.addLast(new LengthFieldPrepender(4));
 					pipeline.addLast(decoder);
-					pipeline.addLast(new ChunkedWriteHandler());
 					pipeline.addLast(new ClientTransportHandler());
 				}
 

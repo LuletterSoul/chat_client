@@ -47,7 +47,10 @@ public class ChatToPointController implements ControlledStage {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         File file = fileChooser.showOpenDialog(getMyStage());
-        UserManager.getInstance().handleRequestUploadFile(file, Long.parseLong(userIdUi.getText()));
+        if (file == null) {
+            return;
+        }
+        ChatManager.getInstance().handleRequestUploadFile(file, Long.parseLong(userIdUi.getText()));
     }
 
 

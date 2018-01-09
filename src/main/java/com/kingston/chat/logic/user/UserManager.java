@@ -7,6 +7,7 @@ import com.kingston.chat.ui.StageController;
 
 import io.netty.channel.*;
 import io.netty.handler.stream.ChunkedFile;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -104,57 +105,6 @@ public class UserManager {
         Stage stage = stageController.getStageBy(R.id.LoginView);
         TextField userIdField = (TextField) stage.getScene().getRoot().lookup("#userId");
         userIdField.setText(String.valueOf(userId));
-    }
-
-    public void handleRequestUploadFile(File file, Long toUserId) {
-//        try {
-//            MagicMatch match = Magic.getMagicMatch(file, false);
-        ReqFileUploadMsg.Builder builder = ReqFileUploadMsg.newBuilder();
-        builder.setFileLength(file.length());
-        builder.setFileName(file.getName());
-        builder.setFileType("exe");
-        builder.setFormUserId(getMyUserId());
-        builder.setLocalPath(file.getPath());
-        builder.setToUserId(toUserId);
-        IoBaseService.INSTANCE.sendServerRequest(builder.build());
-//        }
-//        catch (MagicParseException | MagicMatchNotFoundException | MagicException e) {
-//            e.printStackTrace();
-//        }
-    }
-
-
-    public void receiveResFileUploadPromise(ResFileUploadPromise resFileUploadPromise) {
-        log.debug("Receive response file upload promise.[{}]", resFileUploadPromise.toString());
-        String localPath = resFileUploadPromise.getYourFilePath();
-//        EventLoopGroup group = new NioEventLoopGroup(1);
-//        try{
-//            Bootstrap b  = new Bootstrap();
-//            b.group(group).channel(NioSocketChannel.class)
-//                    .handler(new ChannelInitializer<SocketChannel>(){
-//                        @Override
-//                        protected void initChannel(SocketChannel arg0)
-//                                throws Exception {
-//                            ChannelPipeline pipeline = arg0.pipeline();
-////                            pipeline.addLast(new ClientTransportHandler());
-//                            pipeline.addLast(new ChunkedWriteHandler());
-//                        }
-//
-//                    });
-//
-//            ChannelFuture f = b.connect(new InetSocketAddress(ClientConfigs.REMOTE_SERVER_IP, ClientConfigs.REMOTE_SERVER_PORT))
-//                    .sync();
-//            f.channel().closeFuture().sync();
-//        }catch(Exception e){
-//            e.printStackTrace();
-//        }
-        Channel channel = IoBaseService.INSTANCE.getChannel();
-//        ChannelPipeline pipeline = channel.pipeline();
-        try {
-            IoBaseService.INSTANCE.getChannel().write(new ChunkedFile(new File(localPath)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }
