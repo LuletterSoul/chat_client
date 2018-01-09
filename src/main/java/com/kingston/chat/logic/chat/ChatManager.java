@@ -95,7 +95,7 @@ public class ChatManager {
     }
 
 
-    public void handlerFileUploadComplete(Long sourceId, String filePath, String fileName) {
+    public void handlerFileUploadComplete(Long sourceId, String fileName,String serverPath) {
         StageController stageController = UiBaseService.INSTANCE.getStageController();
         Stage stage = stageController.getStageBy(R.id.ChatToPoint);
         VBox msgContainer = (VBox) stage.getScene().getRoot().lookup("#msgContainer");
@@ -123,14 +123,31 @@ public class ChatManager {
                         fileChooser.setTitle("Save Resource File");
                         fileChooser.setInitialFileName(fileName);
                         File file = fileChooser.showSaveDialog(stageController.getStageBy(R.id.ChatToPoint));
-
-//                        UserManager.getInstance().
-//                                handleRequestUploadFile(file, Long.parseLong(userIdUi.getText()));
+                        if (file == null) {
+                            return;
+                        }
+                        handleRequestDownloadFile(sourceId,fileName,serverPath);
                     }
                 });
                 msgContainer.getChildren().add(pane);
             }
         });
+    }
+
+
+    public void handleRequestDownloadFile(Long sourceId, String fileName, String filePath) {
+        ReqFileDownloadMsg msg = buildReqDownloadFIleMsg(sourceId, fileName, filePath);
+        IoBaseService.INSTANCE.sendServerRequest(msg);
+    }
+
+    private ReqFileDownloadMsg buildReqDownloadFIleMsg(Long sourceId, String fileName, String filePath) {
+        ReqFileDownloadMsg.Builder builder = ReqFileDownloadMsg.newBuilder();
+        builder.setFileName(fileName);
+        builder.setFilePath(filePath);
+        builder.setFormUserId(UserManager.getInstance().getMyUserId());
+        builder.setSourceUserId(sourceId);
+        builder.build();
+        return builder.build();
     }
 
     private void decorateFileNotifyPane(Pane pane, String text) {
@@ -166,6 +183,13 @@ public class ChatManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendDownloadComplete(ReqFileDownloadMsg msg, String localPath) {
+        ResFileDownloadComplete.Builder builder = ResFileDownloadComplete.newBuilder();
+        builder.setFileDownloadMsg(msg);
+        builder.setLocalPath(localPath);
+        IoBaseService.INSTANCE.sendServerRequest(builder.build());
     }
 
 }
